@@ -107,7 +107,7 @@ function LoginDialog({ open, onClose, setLoading, setAccessToken, setName }) {
 }
 
 function MainPage() {
-    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', undefined)
+    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', '')
     const [name, setName] = useLocalStorage('foxbinName', '')
 
     const [loginOpen, setLoginOpen] = useState(false)
@@ -125,20 +125,22 @@ function MainPage() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         foxbin
                     </Typography>
-                    <IconButton
-                        size="large"
-                        color="inherit"
-                        edge="end"
-                        onClick={() => {
-                            if (!accessToken) {
-                                setLoginOpen(true)
-                            } else {
-                                router.push('/account')
-                            }
-                        }}
-                    >
-                        { !accessToken ? <LoginIcon /> : <AccountIcon /> }
-                    </IconButton>
+                    { accessToken !== undefined && (
+                        <IconButton
+                            size="large"
+                            color="inherit"
+                            edge="end"
+                            onClick={() => {
+                                if (accessToken === '') {
+                                    setLoginOpen(true)
+                                } else {
+                                    router.push('/account')
+                                }
+                            }}
+                        >
+                            { accessToken === '' ? <LoginIcon /> : <AccountIcon /> }
+                        </IconButton>
+                    )}
                 </Toolbar>
             </AppBar>
             <Toolbar />
@@ -191,7 +193,7 @@ function MainPage() {
 function publish(slug, content, accessToken, setLoading, router) {
     setLoading(true)
 
-    let jsonBody = { "content": content, "accessToken": accessToken }
+    let jsonBody = { "content": content, "accessToken": accessToken === '' ? undefined : accessToken }
     if (slug !== "") {
         jsonBody = {
             "slug": slug,
