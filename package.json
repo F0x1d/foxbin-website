@@ -4,6 +4,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.10.16",
     "@mui/material": "^5.10.16",
+    "is_js": "^0.9.0",
     "next": "^13.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
