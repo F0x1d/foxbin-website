@@ -107,7 +107,7 @@ function LoginDialog({ open, onClose, setLoading, setAccessToken, setName }) {
 }
 
 function MainPage() {
-    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', '')
+    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', undefined)
     const [name, setName] = useLocalStorage('foxbinName', '')
 
     const [loginOpen, setLoginOpen] = useState(false)
@@ -130,14 +130,14 @@ function MainPage() {
                         color="inherit"
                         edge="end"
                         onClick={() => {
-                            if (accessToken === '') {
+                            if (!accessToken) {
                                 setLoginOpen(true)
                             } else {
                                 router.push('/account')
                             }
                         }}
                     >
-                        { accessToken === '' ? <LoginIcon /> : <AccountIcon /> }
+                        { !accessToken ? <LoginIcon /> : <AccountIcon /> }
                     </IconButton>
                 </Toolbar>
             </AppBar>

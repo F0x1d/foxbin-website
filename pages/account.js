@@ -17,14 +17,10 @@ import { goBackOrReplace } from '../utils/routerUtils'
 import { useRouter } from 'next/router'
 
 function AccountPage() {
-    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', '')
+    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', undefined, () => { router.replace('/') })
     const [name, setName] = useLocalStorage('foxbinName', '')
 
     const router = useRouter()
-
-    if (accessToken === '') {
-        router.replace('/')
-    }
 
     return(
         <Box sx={{ flexGrow: 1 }}>
@@ -51,7 +47,7 @@ function AccountPage() {
                 startIcon={<ClearIcon />} 
                 color="error" 
                 onClick={() => {
-                    setAccessToken('')
+                    setAccessToken(undefined)
                     goBackOrReplace(router, "/")
                 }}
             >
