@@ -23,31 +23,23 @@ import AccountIcon from '@mui/icons-material/AccountCircle'
 import LoginIcon from '@mui/icons-material/Login'
 
 import { useLocalStorage } from '../lib/useLocalStorage'
+import request from '../utils/apiUtils'
 
 import { useRouter } from 'next/router'
 
 function authRequest(urlEnding, username, password, setLoading, setAccessToken) {
     setLoading(true)
 
-    fetch('https://foxbin.f0x1d.com/users/' + urlEnding, {
+    request('https://foxbin.f0x1d.com/users/' + urlEnding, {
         method: "POST",
         headers: { "Content-Type": "application/json", "charset": "UTF-8" },
         body: JSON.stringify({ "username": username, "password": password })
-    })
-    .then(response => response.json())
-    .then(json => {
+    }, (json) => {
         setLoading(false)
-
-        if (json.error) {
-            alert(json.error)
-            return
-        }
-
         setAccessToken(json.accessToken)
-    })
-    .catch(e => {
+    }, (error) => {
         setLoading(false)
-        alert(e)
+        alert(error)
     })
 }
 
@@ -107,14 +99,14 @@ function LoginDialog({ open, onClose, setLoading, setAccessToken, setName }) {
 }
 
 function MainPage() {
-    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', '')
-    const [name, setName] = useLocalStorage('foxbinName', '')
-
     const [loginOpen, setLoginOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const [slug, setSlug] = useState('')
     const [content, setContent] = useState('')
+
+    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', '')
+    const [name, setName] = useLocalStorage('foxbinName', '')
 
     const router = useRouter()
 
@@ -201,25 +193,16 @@ function publish(slug, content, accessToken, setLoading, router) {
         }
     }
 
-    fetch("https://foxbin.f0x1d.com/create", {
+    request("https://foxbin.f0x1d.com/create", {
         method: "POST",
         headers: { "Content-Type": "application/json", "charset": "UTF-8" },
         body: JSON.stringify(jsonBody)
-    })
-    .then(response => response.json())
-    .then(json => {
+    }, (json) => {
         setLoading(false)
-
-        if (json.error) {
-            alert(json.error)
-            return
-        }
-
         router.push('/' + json.slug)
-    })
-    .catch(e => {
+    }, (error) => {
         setLoading(false)
-        alert(e)
+        alert(error)
     })
 }
 

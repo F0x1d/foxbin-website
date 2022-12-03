@@ -73,7 +73,7 @@ function NotePage({ data }) {
             </AppBar>
             <Toolbar />
 
-            <div style={{ whiteSpace: "pre", fontFamily: "monospace", overflowY: "scroll" }}>{data.note.content}</div>
+            <div style={{ whiteSpace: "pre", fontFamily: "monospace", overflowX: "auto", overflowY: "hidden" }}>{data.note.content}</div>
 
             <AlertDialog open={dialogOpened} onClose={(value) => { setDialogOpened(false) }} />
         </Box>
