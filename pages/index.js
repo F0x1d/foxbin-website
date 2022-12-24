@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react' 
+import { useState, useEffect } from 'react'
 
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -22,8 +22,9 @@ import DoneIcon from '@mui/icons-material/Done'
 import AccountIcon from '@mui/icons-material/AccountCircle'
 import LoginIcon from '@mui/icons-material/Login'
 
-import { useLocalStorage } from '../lib/useLocalStorage'
+import publish from '../utils/publish'
 import request from '../utils/apiUtils'
+import useCookie from '../lib/useCookie'
 
 import { useRouter } from 'next/router'
 
@@ -105,8 +106,8 @@ function MainPage() {
     const [slug, setSlug] = useState('')
     const [content, setContent] = useState('')
 
-    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', '')
-    const [name, setName] = useLocalStorage('foxbinName', '')
+    const [accessToken, setAccessToken] = useCookie('foxbin_token', '')
+    const [name, setName] = useCookie('foxbin_name', '')
 
     const router = useRouter()
 
@@ -158,7 +159,7 @@ function MainPage() {
                 color="primary" 
                 sx={{ position: "fixed", bottom: (theme) => theme.spacing(2), right: (theme) => theme.spacing(2) }}
                 onClick={() => { 
-                    publish(slug, content, accessToken, setLoading, router) 
+                    publish(slug, content, accessToken, setLoading, 'create', (json) => { router.push('/' + json.slug) }) 
                 }}
             >
                 <DoneIcon />
@@ -180,30 +181,6 @@ function MainPage() {
             </Backdrop>
         </Box>
     )
-}
-
-function publish(slug, content, accessToken, setLoading, router) {
-    setLoading(true)
-
-    let jsonBody = { "content": content, "accessToken": accessToken === '' ? undefined : accessToken }
-    if (slug !== "") {
-        jsonBody = {
-            "slug": slug,
-            ...jsonBody
-        }
-    }
-
-    request("https://foxbin.f0x1d.com/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "charset": "UTF-8" },
-        body: JSON.stringify(jsonBody)
-    }, (json) => {
-        setLoading(false)
-        router.push('/' + json.slug)
-    }, (error) => {
-        setLoading(false)
-        alert(error)
-    })
 }
 
 export default MainPage

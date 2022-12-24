@@ -1,13 +1,15 @@
 import is from 'is_js'
 
 function goBackOrReplace(router, where) {
-    const requiredSize = is.safari() ? 1 : 2
-
-    if (window.history.length > requiredSize) {
+    if (hasBackStack()) {
         router.back()
     } else {
         router.replace(where)
     }
 }
 
-export { goBackOrReplace }
+function hasBackStack() {
+    return window.history.length > is.safari() ? 1 : 2
+}
+
+export { goBackOrReplace, hasBackStack }

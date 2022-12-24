@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState, useEffect } from 'react' 
+import { useState, useEffect } from 'react'
 
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -18,12 +18,11 @@ import ListItemButton from '@mui/material/ListItemButton'
 import Avatar from '@mui/material/Avatar'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import ClearIcon from '@mui/icons-material/Clear'
 import NoteIcon from '@mui/icons-material/Note'
 import DeleteIcon from '@mui/icons-material/Delete'
 import LogoutIcon from '@mui/icons-material/Logout'
 
-import { useLocalStorage } from '../lib/useLocalStorage'
+import useCookie from '../lib/useCookie'
 import { goBackOrReplace } from '../utils/routerUtils'
 import request from '../utils/apiUtils'
 
@@ -40,7 +39,7 @@ function fetchUserNotes(accessToken, setNotes) {
 function deleteNote(accessToken, slug, setLoading, setNotes) {
     setLoading(true)
 
-    request('https://foxbin.f0x1d.com/delete/' + slug + '?accessToken=' + accessToken, {}, (json) => {
+    request('https://foxbin.f0x1d.com/delete/' + encodeURIComponent(slug) + '?accessToken=' + accessToken, {}, (json) => {
         setLoading(false)
         setNotes((notes) => notes.filter((note, i) => note.slug !== slug))
     }, (error) => {
@@ -78,12 +77,12 @@ function AccountPage() {
     const [notes, setNotes] = useState([])
     const [loading, setLoading] = useState(false)
 
-    const [accessToken, setAccessToken] = useLocalStorage('foxbinToken', '', (accessToken) => { 
+    const [accessToken, setAccessToken] = useCookie('foxbin_token', '', (accessToken) => { 
         fetchUserNotes(accessToken, setNotes)
     }, () => { 
         router.replace('/')
     })
-    const [name, setName] = useLocalStorage('foxbinName', '')
+    const [name, setName] = useCookie('foxbin_name', '')
 
     const router = useRouter()
 

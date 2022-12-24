@@ -16,7 +16,9 @@ import DialogActions from '@mui/material/DialogActions'
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import WarningIcon from '@mui/icons-material/Warning'
+import EditIcon from '@mui/icons-material/Edit'
 
+import getNoteFromServer from '../utils/getNoteFromServer'
 import { goBackOrReplace } from '../utils/routerUtils'
 
 import { useRouter } from 'next/router'
@@ -38,7 +40,7 @@ function AlertDialog({ open, onClose }) {
     )
 }
 
-function NotePage({ data }) {
+function NotePage({ note }) {
     const [dialogOpened, setDialogOpened] = useState(false)
 
     const router = useRouter()
@@ -61,6 +63,17 @@ function NotePage({ data }) {
                         {router.query.slug}
                     </Typography>
 
+                    
+                    { note.editable && (
+                        <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={() => { router.push('/e/' + router.query.slug) }}
+                        >
+                            <EditIcon />
+                        </IconButton>
+                    )}
+
                     <IconButton
                         size="large"
                         edge="end"
@@ -73,33 +86,15 @@ function NotePage({ data }) {
             </AppBar>
             <Toolbar />
 
-            <div style={{ whiteSpace: "pre", fontFamily: "monospace", overflowX: "auto", overflowY: "hidden" }}>{data.note.content}</div>
+            <div style={{ whiteSpace: "pre", fontFamily: "monospace", overflowX: "auto", overflowY: "hidden" }}>{note.content}</div>
 
             <AlertDialog open={dialogOpened} onClose={(value) => { setDialogOpened(false) }} />
         </Box>
     )
 }
 
-export async function getServerSideProps(context) {
-    context.res.setHeader(
-        'Cache-Control',
-        'public, s-maxage=10, stale-while-revalidate=59'
-    )
-
-    const response = await fetch("https://foxbin.f0x1d.com/get/" + context.params.slug)
-    const data = await response.json()
-
-    if (data.error) {
-        return {
-            notFound: true
-        }
-    }
-  
-    return { 
-        props: { 
-            data
-        } 
-    }
+export async function getServerSideProps({ req, res, params }) {
+    return await getNoteFromServer(req, res, params)
 }
 
 export default NotePage
