@@ -9,7 +9,7 @@ function goBackOrReplace(router, where) {
 }
 
 function hasBackStack() {
-    return window.history.length > is.safari() ? 1 : 2
+    return window.history.length > (is.safari() ? 1 : 2)
 }
 
 export { goBackOrReplace, hasBackStack }
